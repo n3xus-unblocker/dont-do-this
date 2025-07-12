@@ -1,0 +1,36 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches:
+      - main  # or whatever branch you want
+  workflow_dispatch:  # allows you to run it manually
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'  # or whatever version you need
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pyinstaller
+
+    - name: Build with PyInstaller
+      run: |
+        pyinstaller --onefile main.py
+
+    - name: Upload executable
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-exe
+        path: dist/main.exe
